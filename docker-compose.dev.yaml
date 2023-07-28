@@ -1,0 +1,70 @@
+# Rails: docker-compose -f docker-compose.dev.yaml --profile rails up --build
+# Rails tests: docker-compose -f docker-compose.dev.yaml run hometime-rails-test
+
+version: '3.9'
+
+services:
+
+  hometime-postgres:
+    image: postgres:latest
+    restart: on-failure
+    environment:
+      POSTGRES_DB: hometime_development
+      POSTGRES_PASSWORD: hometime-password
+      POSTGRES_USER: postgres
+    volumes:
+      - hometime-postgres-data:/var/lib/postgresql/data
+    # ports:
+    #   - 127.0.0.1:5432:5432
+
+  hometime-rails:
+    # platform: linux/amd64
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    profiles:
+      - rails
+    environment:
+      RAILS_ENV: development
+      DB_USER: postgres
+      DB_PASS: hometime-password
+      DB_HOST: hometime-postgres
+    command:
+      - bash
+      - "-c"
+      - "rm -f tmp/pids/server.pid && bundle install && bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails db:seed && bin/rails s -b 0.0.0.0"
+    depends_on:
+      - hometime-postgres
+    volumes:
+      - ruby-3-2-gems:/usr/local/bundle
+      - .:/app
+    ports:
+      - 127.0.0.1:3000:3000
+
+  hometime-rails-test:
+    # platform: linux/amd64
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    profiles:
+      - rails-test
+    environment:
+      RAILS_ENV: test
+      DB_USER: postgres
+      DB_PASS: hometime-password
+      DB_HOST: hometime-postgres
+    command:
+      - bash
+      - "-c"
+      - "bundle install && rails test"
+    depends_on:
+      - hometime-postgres
+    volumes:
+      - ruby-3-2-gems:/usr/local/bundle
+      - .:/app
+
+volumes:
+  hometime-postgres-data:
+    driver: local
+  ruby-3-2-gems:
+    driver: local

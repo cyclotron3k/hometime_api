@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  guest: one
+  code: Code1
+  start_date: 2023-07-26
+  end_date: 2023-07-26
+  nights: 1
+  guests: 1
+  children: 1
+  adults: 1
+  infants: 1
+  status: MyString
+  security_price: 9.99
+  payout_price: 9.99
+  total_price: 9.99
+  currency: AUD
+
+two:
+  guest: two
+  code: Code2
+  start_date: 2023-07-26
+  end_date: 2023-07-26
+  nights: 1
+  guests: 1
+  children: 1
+  adults: 1
+  infants: 1
+  status: MyString
+  security_price: 9.99
+  payout_price: 9.99
+  total_price: 9.99
+  currency: AUD
